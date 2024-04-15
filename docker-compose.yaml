@@ -89,12 +89,31 @@ services:
     depends_on:
       - db-store
       - discovery
-    
+        
   winrecord:
     build:
       context: ../platform.pokerber.winrecord-resource/
       dockerfile: Dockerfile
     image: store-winrecord:latest
+    environment:
+      - spring.datasource.url=jdbc:postgresql://store-db-store:5432/store
+      - spring.datasource.username=store
+      - spring.datasource.password=store
+      - eureka.client.service-url.defaultZone=http://store-discovery:8761/eureka/
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+      - private-network
+    depends_on:
+      - db-store
+      - discovery
+
+  tournamentmanager:
+    build:
+      context: ../platform.pokerber.tournamentmanager-resource/
+      dockerfile: Dockerfile
+    image: store-tournamentmanager:latest
     environment:
       - spring.datasource.url=jdbc:postgresql://store-db-store:5432/store
       - spring.datasource.username=store
